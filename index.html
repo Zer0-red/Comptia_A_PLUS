@@ -24,6 +24,8 @@ html[data-theme="dark"]{
   --text:#e6edf3; --muted:#8b97a7; --faint:#5d6776;
   --shadow:0 10px 30px -12px #00000088;
   --grid:#ffffff06;
+  --cyl-edge:#b7c2d1; --cyl-body:#2b313b; --cyl-cap:#3a424e;
+  --seg-data:#7fb0e6; --seg-parity:#f3c24e;
 }
 html[data-theme="light"]{
   --bg:#eef1f5; --bg2:#e4e9ef; --panel:#ffffff; --panel2:#f6f8fb;
@@ -32,6 +34,8 @@ html[data-theme="light"]{
   --shadow:0 10px 28px -14px #1a2a4022;
   --grid:#0a1a3008;
   --led:#16a34a; --led-glow:#16a34a55;
+  --cyl-edge:#2b3340; --cyl-body:#d7dce3; --cyl-cap:#eef1f5;
+  --seg-data:#8fbcf0; --seg-parity:#f2c14e;
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
@@ -157,6 +161,9 @@ table.ports td:first-child{width:30%;font-family:var(--mono);color:var(--dc);fon
 .timer{font-family:var(--mono);font-size:13px;border:1px solid var(--border);background:var(--panel);border-radius:9px;padding:6px 10px;color:var(--text);white-space:nowrap}
 .timer.low{border-color:var(--wrong);color:var(--wrong)}
 .exam-note{background:var(--panel2);border:1px solid var(--border);border-left:3px solid var(--led);border-radius:12px;padding:13px 16px;margin:14px 0;color:var(--muted);font-size:14px}
+.ctx-panel{background:var(--panel2);border:1px solid var(--border);border-left:3px solid var(--dc,var(--d2));border-radius:12px;padding:14px 16px;margin:14px 0 18px;font-size:14px;color:var(--text);white-space:pre-line}
+.ctx-panel .ctx-h{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.review-card .ctx-panel{margin:0 0 10px}
 .review-list{display:flex;flex-direction:column;gap:12px;margin-top:14px}
 .review-card{background:var(--panel);border:1px solid var(--border);border-radius:13px;padding:15px}
 .review-card .rq{font-weight:600;margin-bottom:7px}
@@ -172,6 +179,61 @@ table.ports td:first-child{width:30%;font-family:var(--mono);color:var(--dc);fon
 .pbq-row.good select{border-color:var(--led)}
 .pbq-row.bad select{border-color:var(--wrong)}
 .pbq-score{font-family:var(--mono);font-size:13px;margin-top:14px;padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--panel2)}
+/* ============ RAID LAB ============ */
+.raid-toggle{display:inline-flex;gap:3px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:3px;margin:6px 0 18px}
+.raid-toggle button{font-family:var(--mono);font-size:12px;font-weight:500;border:none;background:transparent;color:var(--muted);padding:7px 16px;border-radius:7px;cursor:pointer;transition:.14s}
+.raid-toggle button.on{background:var(--led);color:#06210f}
+html[data-theme="light"] .raid-toggle button.on{color:#fff}
+.raid-levels{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 4px}
+.raid-levels button{font-family:var(--mono);font-size:13px;background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:9px 14px;cursor:pointer;transition:.14s;text-align:left;line-height:1.25}
+.raid-levels button small{display:block;color:var(--muted);font-size:10px;letter-spacing:.04em}
+.raid-levels button.sel{border-color:var(--led);background:color-mix(in srgb,var(--led) 10%,var(--panel))}
+.raid-stepper{display:inline-flex;align-items:center;gap:0;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--panel)}
+.raid-stepper button{width:40px;height:40px;border:none;background:transparent;color:var(--text);font-size:20px;cursor:pointer}
+.raid-stepper button:disabled{opacity:.3;cursor:default}
+.raid-stepper span{min-width:66px;text-align:center;font-family:var(--mono);font-size:14px}
+.drive-bay{display:flex;flex-wrap:wrap;gap:16px;margin:18px 0;padding:20px 18px;border:1px dashed var(--border2);border-radius:14px;background:var(--bg2)}
+.pair{display:flex;gap:10px;padding:10px 10px 8px;border:1px solid var(--border);border-radius:14px;position:relative}
+.pair::after{content:attr(data-label);position:absolute;top:-9px;left:10px;font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--bg2);padding:0 5px}
+.disk{display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;user-select:none;transition:transform .12s}
+.disk:hover{transform:translateY(-3px)}
+.cyl{position:relative;width:62px;min-height:112px;border:2px solid var(--cyl-edge);border-radius:31px/13px;background:var(--cyl-body);overflow:hidden;
+  box-shadow:inset -7px 0 11px rgba(0,0,0,.20), inset 7px 0 9px rgba(255,255,255,.10)}
+.cyl .cap{height:13px;background:var(--cyl-cap);border-bottom:2px solid var(--cyl-edge)}
+.cyl .segs{display:flex;flex-direction:column}
+.seg{height:23px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;font-weight:700;
+  color:#241803;background:var(--seg-data);border-bottom:1.5px solid rgba(0,0,0,.28);
+  box-shadow:inset -6px 0 9px rgba(0,0,0,.14), inset 6px 0 7px rgba(255,255,255,.18)}
+.seg.parity{background:var(--seg-parity)}
+.disk-name{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.03em}
+.disk.failed .cyl{border-color:var(--wrong)}
+.disk.failed .seg{filter:grayscale(.65) brightness(.62)}
+.disk.failed .disk-name{color:var(--wrong)}
+.disk.failed .cyl::before{content:"✕";position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;
+  font-size:34px;font-weight:800;color:var(--wrong);text-shadow:0 1px 2px rgba(0,0,0,.4)}
+.raid-status{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:8px 0}
+.raid-stat{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:13px 15px}
+.raid-stat .k{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.raid-stat .v{font-family:var(--display);font-size:20px;font-weight:700;margin-top:3px}
+.raid-state{border-radius:12px;padding:13px 16px;margin:10px 0;font-size:14.5px;border:1px solid var(--border)}
+.raid-state.ok{border-color:var(--led);background:color-mix(in srgb,var(--led) 10%,var(--panel))}
+.raid-state.degraded{border-color:var(--d3);background:color-mix(in srgb,var(--d3) 12%,var(--panel))}
+.raid-state.dead{border-color:var(--wrong);background:color-mix(in srgb,var(--wrong) 12%,var(--panel))}
+.raid-legend{display:flex;flex-wrap:wrap;gap:14px;font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:6px}
+.raid-legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.raid-hint{font-size:13px;color:var(--muted);margin:4px 0 0}
+.raid-scenario{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:22px;margin-top:8px}
+.raid-scenario .sc-q{font-family:var(--display);font-size:19px;line-height:1.35;margin:0 0 16px}
+.raid-opts{display:flex;flex-direction:column;gap:10px}
+.raid-opts button{font-family:var(--body);text-align:left;background:var(--panel2);border:1px solid var(--border);border-radius:11px;padding:13px 16px;cursor:pointer;color:var(--text);font-size:15px;transition:.12s}
+.raid-opts button:hover:not(:disabled){border-color:var(--border2)}
+.raid-opts button:disabled{cursor:default}
+.raid-opts button.right{border-color:var(--led);background:color-mix(in srgb,var(--led) 12%,var(--panel))}
+.raid-opts button.wrongpick{border-color:var(--wrong);background:color-mix(in srgb,var(--wrong) 12%,var(--panel))}
+.raid-fb{margin-top:16px;border-left:3px solid var(--dc,var(--d2));background:var(--panel2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;font-size:14.5px}
+.raid-fb .ft{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.raid-score{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.raid-score b{color:var(--led)}
 
 /* ============ BUTTONS ============ */
 .btn{font-family:var(--display);font-weight:600;font-size:15px;border-radius:11px;cursor:pointer;
@@ -1139,6 +1201,81 @@ const PHASES = {
 };
 let phase=1; try{ phase=+localStorage.getItem('bench_phase')||1; }catch(e){} if(![1,2].includes(phase)) phase=1;
 function P(){ return PHASES[phase]; }
+
+/* ============ SHARED-CONTEXT REPAIR ============
+   Some imported questions belong to a group that shares a block of
+   specifications (e.g. "based on the specifications given", "this drive").
+   The spec block originally lived only on the first question of the group,
+   so when questions are served individually the rest are unanswerable.
+   This pass strips the inline spec block off the carrier question and
+   attaches the shared context (q.ctx) to every question in the group so it
+   renders in a panel above the question. */
+const SHARED_CONTEXTS = {
+  1:[
+    {cat:7, from:1, to:7, head:'Reference: internal hard drive specifications',
+     text:'• SATA 6 Gb/s transfer rate\n• 1 TB capacity\n• Minimizes noise to levels near the threshold of human hearing\n• 3.5-inch, 7,200 RPM\n• 32 MB buffer size'},
+    {cat:7, from:12, to:16, head:'Reference: SSD specifications and motherboard documentation',
+     text:'A user wants to add an SSD to a computer.\n\nSSD specifications:\n• 1 TB capacity\n• PCIe 3.0 x4 interface\n• M.2 2280\n\nMotherboard documentation:\n• 1 × M.2_1 socket 3 with M key, type 2242/2260/2280/22110 storage devices support (SATA and PCIe 3.0 x4 mode)\n• 1 × M.2_2 socket 3 with M key, type 2242/2260/2280/22110 storage devices support (SATA and PCIe 4.0 x4 mode)'},
+    {cat:6, from:1, to:5, head:'Reference: motherboard RAM specifications',
+     text:'• Four DDR4 SDRAM DIMM sockets arranged in two channels, supporting up to 128 GB (32 GB single DIMM capacity)\n• Support for DDR4 3200/2933/2667/2400/2133 MHz DIMMs\n• Support for ECC unbuffered DIMM 1Rx8/2Rx8 modules\n• Support for non-ECC unbuffered DIMM 1Rx8/2Rx8/1Rx16 modules\n• Support for extreme memory profile (XMP) modules\n• Support for up to 16 GB of system memory'},
+    {cat:6, from:6, to:11, head:'Reference: desktop memory advertisements',
+     text:'A. 2 GB 240-pin SDRAM DDR3L 1600 (PC3L 12800) Desktop Memory\nB. 4 GB DDR3-1600 (PC3-12800) CL11 240-pin DIMM\nC. 4 GB ECC registered DDR3 SDRAM CAS latency 9\nD. 4 GB 240-pin DDR3 SDRAM 1333 (PC3 10600) CAS 9\nE. 8 GB (1×8 GB) 1333 MHz PC3-10600 CL9 ECC registered dual-rank low power\nF. 8 GB (2×4 GB) DDR4 SDRAM 2133 (PC4 17000)\nG. 16 GB PC4L-2666\nH. 16 GB kit (2×8 GB) DDR4 2666 MHz PC4-21300 CL19 unbuffered non-ECC 1.2V UDIMM\nI. 16 GB 1Rx16 DDR4 UDIMM 3200 MHz'},
+    {cat:8, from:1, to:7, head:'Reference: optical drive specifications',
+     text:'• SATA interface, half-height internal BD-ROM\n• Maximum 4× BD-ROM/BD-RE SL and 4× BD-ROM/BD-R/BD-RE DL CAV reading\n• Maximum 8× DVD-ROM/+R/+RW/+R DL/-R/-RW/-RW DL CAV reading\n• Maximum 32× CD-ROM/R/RW CAV reading\n• Random access times: BD 250 ms; DVD 160 ms; CD 150 ms\n• Buffer size 2 MB\n• HD Blu-ray playback requires 3.0 GHz, 1 GB+ of RAM, Windows 7 or higher, and an HDCP-capable display or TV for digital output'},
+    {cat:10, from:6, to:6, head:'Reference: laptop memory advertisements',
+     text:'A. 16 GB (2×8 GB) 204-pin DDR3 SODIMM DDR3L 1600 (PC3L 12800) 1.35 V unbuffered\nB. 4 GB (2×2 GB) 1,333 MHz DDR3 unbuffered DIMM\nC. 8 GB 260-pin DDR4 SODIMM 2400 (PC4 19200)\nD. 8 GB DDR3 204-pin SODIMM PC3-12800 memory'},
+    {cat:4, from:12, to:15, head:'Reference: BIOS/UEFI configuration menus',
+     text:'• Main menu — BIOS information, BIOS version, build date, EC F/W version, CPU information, memory information, system information, system language, system date, system time\n• Onboard Devices menu — PCIe, LAN1 controller, USB 2.0 controller, USB 3.0 controller, Audio, OnChip SATA controller, SATA, HDMI/DVI\n• Boot Device Priority menu — 1st / 2nd / 3rd / 4th boot device'},
+  ],
+  2:[]
+};
+function parseSrc(e){
+  const m = /Extra file category\s+(\d+)[^,]*,\s*Q(\d+)/i.exec(e||'');
+  return m ? {cat:+m[1], num:+m[2]} : null;
+}
+function attachSharedContexts(){
+  [1,2].forEach(ph=>{
+    const specs = SHARED_CONTEXTS[ph] || [];
+    PHASES[ph].questions.forEach(q=>{
+      const src = parseSrc(q.e);
+      // 1) Clean carrier questions that carry an inline spec block.
+      if(typeof q.q === 'string'){
+        if(q.q.startsWith('Context note for following question(s):')){
+          const lines = q.q.split('\n').map(s=>s.trim()).filter(Boolean);
+          q.q = lines[lines.length-1]; // keep only the actual question
+        }
+        const adIdx = q.q.indexOf('Consider the following memory advertisements');
+        if(adIdx > 0) q.q = q.q.slice(0, adIdx).replace(/\s+$/,'');
+      }
+      // 2) Clean the malformed BIOS-menu blob accidentally pasted into an option.
+      if(Array.isArray(q.o)){
+        q.o = q.o.map(opt=>{
+          if(typeof opt==='string'){
+            const ci = opt.indexOf('Consider the following BIOS/UEFI configuration menu');
+            if(ci > 0) return opt.slice(0, ci).replace(/\s+$/,'');
+          }
+          return opt;
+        });
+      }
+      // 3) Attach shared context to every question in its group.
+      if(src){
+        for(const sp of specs){
+          if(src.cat===sp.cat && src.num>=sp.from && src.num<=sp.to){
+            q.ctx = (q.ctx ? q.ctx + '\n\n' : '') + sp.text;
+            q.ctxHead = sp.head;
+          }
+        }
+      }
+    });
+  });
+}
+attachSharedContexts();
+function ctxPanelHTML(q, cv){
+  if(!q || !q.ctx) return '';
+  return `<div class="ctx-panel" style="--dc:var(${cv||'--d2'})">`+
+    `<div class="ctx-h">${esc(q.ctxHead||'Reference information')}</div>`+
+    `${fmt(q.ctx)}</div>`;
+}
 const COLORVAR = {1:'--d1',2:'--d2',3:'--d3',4:'--d4',5:'--d5'};
 
 const EXAM_TARGET = 90;
@@ -1232,7 +1369,7 @@ document.getElementById('resetBtn').onclick=()=>{
 /* ============ ROUTER ============ */
 const app=document.getElementById('app');
 let quiz=null;
-function go(view,arg){ window.scrollTo(0,0); ({home:viewHome,lesson:viewLesson,setup:viewSetup,quiz:viewQuiz,results:viewResults,pbqs:viewPBQList,pbq:viewPBQ}[view])(arg); }
+function go(view,arg){ window.scrollTo(0,0); ({home:viewHome,lesson:viewLesson,setup:viewSetup,quiz:viewQuiz,results:viewResults,pbqs:viewPBQList,pbq:viewPBQ,raidlab:viewRaidLab}[view])(arg); }
 function el(html){ app.innerHTML='<div class="view">'+html+'</div>'; }
 function esc(s){ return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
 function fmt(s){ return esc(s).replace(/\n/g,'<br>'); }
@@ -1348,6 +1485,7 @@ function viewHome(){
       <button class="mode-card" onclick="startExam()"><strong>Exam Mode</strong><span>Weighted by domain percentage, timed, explanations at the end.</span><div class="badge-row"><span class="badge">${examTarget()} Qs</span><span class="badge">90 min</span></div></button>
       <button class="mode-card" onclick="startWeak()"><strong>Weak Mode</strong><span>Targets missed questions and low-score domains.</span><div class="badge-row"><span class="badge">adaptive</span></div></button>
       <button class="mode-card" onclick="go('pbqs')"><strong>PBQ Drills</strong><span>Scenario-based matching tasks for hands-on recall.</span><div class="badge-row"><span class="badge">${PBQS[phase].length} drills</span></div></button>
+      <button class="mode-card" onclick="go('raidlab')"><strong>RAID Lab 🧩</strong><span>Build arrays, fail drives, and drill the tricky RAID math.</span><div class="badge-row"><span class="badge hot">interactive</span></div></button>
     </div>
     ${prog().wrong.length?`<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px"><button class="btn" onclick="startWrong()">Review ${prog().wrong.length} missed</button></div>`:''}
     <div class="section-h"><h3>Domains</h3><div class="line"></div></div>
@@ -1386,32 +1524,69 @@ function markRead(d){
 }
 
 /* ============ QUIZ SETUP ============ */
-let setupDomain='mix', setupLen=10;
+let setupDomain='mix', setupLen=10, setupTopic='';
+/* Topic drills pull every matching question regardless of exam domain, so you
+   can grind one trouble area (e.g. RAID or cloud) that's otherwise scattered. */
+const TOPIC_DRILLS = {
+  raid:  {label:'RAID & redundancy',      kw:['raid','striping','striped','mirroring','parity','spanning','jbod','storage spaces']},
+  cloud: {label:'Cloud & virtualization', kw:['cloud','saas','paas','iaas','daas','hypervisor','virtual machine','virtualization','vdi','virtual desktop','on-premises','on premises']},
+};
+function topicBlob(q){
+  let e = q.e || '';
+  ['Source note:','Extra file category'].forEach(m=>{ const i=e.indexOf(m); if(i>=0) e=e.slice(0,i); });
+  return ((q.q||'')+' '+((q.o||[]).join(' '))+' '+e+' '+(q.a||'')).toLowerCase();
+}
+function topicRe(key){
+  const kw=(TOPIC_DRILLS[key].kw).map(k=>k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'));
+  return new RegExp('\\b('+kw.join('|')+')\\b','i');
+}
+function topicIds(key){
+  const Q=P().questions, re=topicRe(key), out=[];
+  Q.forEach((q,i)=>{ if(re.test(topicBlob(q))) out.push(i); });
+  return out;
+}
+function setupPoolSize(){
+  if(setupTopic) return topicIds(setupTopic).length;
+  return setupDomain==='mix' ? P().questions.length : qByDomain(+setupDomain).length;
+}
 function viewSetup(arg){
   const DOMAINS=P().domains, QUESTIONS=P().questions;
   setupDomain = arg==null?'mix':arg;
-  const domOpts = [`<button class="opt ${setupDomain==='mix'?'sel':''}" onclick="pickDom('mix')">
+  const topicChips = [`<button class="chip ${setupTopic===''?'sel':''}" onclick="pickTopic('')">No topic filter</button>`]
+    .concat(Object.keys(TOPIC_DRILLS).map(k=>{
+      const n=topicIds(k).length;
+      return `<button class="chip ${setupTopic===k?'sel':''}" onclick="pickTopic('${k}')">${TOPIC_DRILLS[k].label} · ${n}</button>`;
+    })).join('');
+  const domDisabled = setupTopic!=='';
+  const domOpts = [`<button class="opt ${!domDisabled&&setupDomain==='mix'?'sel':''}" onclick="pickDom('mix')">
       <span class="ot">Mixed</span><span class="os">all ${QUESTIONS.length} questions</span></button>`]
-    .concat(DOMAINS.map(d=>`<button class="opt ${setupDomain==d.n?'sel':''}" onclick="pickDom(${d.n})" style="--dc:var(${COLORVAR[d.n]})">
+    .concat(DOMAINS.map(d=>`<button class="opt ${!domDisabled&&setupDomain==d.n?'sel':''}" onclick="pickDom(${d.n})" style="--dc:var(${COLORVAR[d.n]})">
       <span class="ot">${d.n}.0 ${d.title.split(' ')[0]}</span><span class="os">${qByDomain(d.n).length} questions</span></button>`)).join('');
-  const pool = setupDomain==='mix'?QUESTIONS.length:qByDomain(+setupDomain).length;
+  const pool = setupPoolSize();
   const lens=[5,10,20].filter(n=>n<=pool);
-  const lenSet=[...new Set(lens.concat(pool))];
+  const lenSet=[...new Set(lens.concat(pool))].filter(n=>n>0);
   if(setupLen>pool) setupLen=pool;
   const lenChips=lenSet.map(n=>`<button class="chip ${setupLen===n?'sel':''}" onclick="pickLen(${n})">${n===pool?('All '+n):n} Qs</button>`).join('');
+  const topicNote = setupTopic
+    ? `<p style="color:var(--muted);margin:6px 0 0;font-size:13px">Drilling <b>${TOPIC_DRILLS[setupTopic].label}</b> across every domain in ${P().name} — ${pool} question${pool===1?'':'s'} available. (Domain selection is ignored while a topic is active.)</p>`
+    : '';
   el(`
     <button class="back" onclick="go('home')">← Home</button>
     <span class="eyebrow">${P().name} · configure quiz</span>
     <h2 style="font-family:var(--display);font-size:28px;margin:8px 0 4px;letter-spacing:-.02em">Build your quiz</h2>
     <p style="color:var(--muted);margin:0 0 8px">Questions are drawn at random and shuffled. You'll see an explanation after every answer.</p>
-    <div class="section-h"><h3>Topic</h3><div class="line"></div></div>
-    <div class="setup-grid">${domOpts}</div>
+    <div class="section-h"><h3>Topic drill</h3><div class="line"></div></div>
+    <div class="lenrow">${topicChips}</div>
+    ${topicNote}
+    <div class="section-h"><h3>Domain</h3><div class="line"></div></div>
+    <div class="setup-grid" style="${domDisabled?'opacity:.4;pointer-events:none':''}">${domOpts}</div>
     <div class="section-h"><h3>Length</h3><div class="line"></div></div>
     <div class="lenrow">${lenChips}</div>
     <div style="margin-top:30px"><button class="btn primary" onclick="startQuiz()">Begin →</button></div>
   `);
 }
-function pickDom(d){ setupDomain=d; viewSetup(d); }
+function pickTopic(k){ setupTopic = (setupTopic===k? '' : k); if(setupTopic) setupDomain='mix'; viewSetup(setupDomain); }
+function pickDom(d){ setupDomain=d; setupTopic=''; viewSetup(d); }
 function pickLen(n){ setupLen=n; viewSetup(setupDomain); }
 
 /* ============ QUIZ ENGINE ============ */
@@ -1419,9 +1594,11 @@ function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.ran
 function buildOrder(ids){ const Q=P().questions, o={}; ids.forEach(id=>{ o[id]=Q[id].o?shuffle(Q[id].o.map((_,i)=>i)):[]; }); return o; }
 function startQuiz(){
   const QUESTIONS=P().questions;
-  let pool = setupDomain==='mix' ? QUESTIONS.map((q,i)=>i) : qByDomain(+setupDomain).map(o=>o.i);
+  let pool = setupTopic ? topicIds(setupTopic)
+           : setupDomain==='mix' ? QUESTIONS.map((q,i)=>i)
+           : qByDomain(+setupDomain).map(o=>o.i);
   pool = shuffle(pool).slice(0, setupLen);
-  quiz={ phase, mode:'practice', domain:setupDomain, ids:pool, order:buildOrder(pool), cur:0, score:0, answered:false, missed:[], picks:{} };
+  quiz={ phase, mode:'practice', domain:setupTopic?'mix':setupDomain, topic:setupTopic||null, ids:pool, order:buildOrder(pool), cur:0, score:0, answered:false, missed:[], picks:{} };
   go('quiz');
 }
 function startWrong(){
@@ -1446,6 +1623,7 @@ function viewQuiz(){
       </div>
       <span class="qtag" style="--dc:var(${cv})">Obj ${objectiveLabel(q)} · ${esc(dom.title)}</span>
       <div class="exam-note">Open-answer study card: think of the answer, then reveal it and self-grade.</div>
+      ${ctxPanelHTML(q, cv)}
       <h2 class="question">${fmt(q.q)}</h2>
       <div id="flashwrap"><button class="btn primary" onclick="revealFlash()">Reveal answer</button></div>
       <div class="qfoot" id="qfoot"></div>
@@ -1471,6 +1649,7 @@ function viewQuiz(){
     <span class="qtag" style="--dc:var(${cv})">Obj ${objectiveLabel(q)} · ${esc(dom.title)}</span>
     ${quiz.mode==='exam'?'<div class="exam-note">Exam Mode: no explanation is shown until your results. Pick the best answer and continue.</div>':''}
     ${multi?'<div class="exam-note">Select all correct answers, then check.</div>':''}
+    ${ctxPanelHTML(q, cv)}
     <h2 class="question">${fmt(q.q)}</h2>
     <div class="answers" id="answers">${opts}</div>
     <div id="exwrap"></div>
@@ -1644,7 +1823,7 @@ function missedReviewHtml(){
   const Q=P().questions;
   const cards=quiz.missed.slice(0,12).map(id=>{
     const q=Q[id], correct=isFlash(q)?(q.a||''):Array.isArray(q.c)?q.c.map(i=>q.o[i]).join('; '):q.o[q.c];
-    return `<div class="review-card"><div class="ra">Obj ${objectiveLabel(q)}</div><div class="rq">${fmt(q.q)}</div><div class="ra"><b>Correct answer:</b> ${fmt(correct)}</div><div><b>Explanation:</b><br>${fmt(q.e)}</div></div>`;
+    return `<div class="review-card"><div class="ra">Obj ${objectiveLabel(q)}</div>${ctxPanelHTML(q, COLORVAR[q.d])}<div class="rq">${fmt(q.q)}</div><div class="ra"><b>Correct answer:</b> ${fmt(correct)}</div><div><b>Explanation:</b><br>${fmt(q.e)}</div></div>`;
   }).join('');
   const more=quiz.missed.length>12?`<p style="color:var(--muted);font-size:13px">Showing 12 of ${quiz.missed.length} missed explanations. Retry missed to drill all of them.</p>`:'';
   return `<div class="section-h"><h3>Missed explanation review</h3><div class="line"></div></div><div class="review-list">${cards}</div>${more}`;
@@ -1694,6 +1873,230 @@ function pbqScoreHtml(x){
   const detail=x.items.map((it,i)=>{ const ok=pbq.picks[i]===it.answer; if(ok) correct++; return `<li><b>${esc(it.label)}</b>: ${ok?'correct':'answer = '+esc(it.answer)}. ${esc(it.explain)}</li>`; }).join('');
   return `<div class="pbq-score"><b>Score: ${correct}/${x.items.length}</b><ul>${detail}</ul></div>`;
 }
+
+/* ============ RAID LAB (mini-game) ============ */
+const RAID = {
+  0 :{name:'RAID 0', sub:'Striping', min:2, even:false,
+      tol:n=>0,   usable:n=>n,   eff:n=>100,
+      blurb:'Data is striped across every drive for max speed and full capacity — but no redundancy at all.'},
+  1 :{name:'RAID 1', sub:'Mirroring', min:2, even:false, fixed:2,
+      tol:n=>1,   usable:n=>1,   eff:n=>50,
+      blurb:'Two drives keep identical copies. Survives one failure; you only get one drive of usable space.'},
+  5 :{name:'RAID 5', sub:'Striping + parity', min:3, even:false,
+      tol:n=>1,   usable:n=>n-1, eff:n=>Math.round((n-1)/n*100),
+      blurb:'Striping with distributed parity. Survives ONE failure and loses the equivalent of one drive to parity.'},
+  6 :{name:'RAID 6', sub:'Striping + double parity', min:4, even:false,
+      tol:n=>2,   usable:n=>n-2, eff:n=>Math.round((n-2)/n*100),
+      blurb:'Like RAID 5 but with two parity blocks. Survives any TWO simultaneous failures; loses two drives of capacity.'},
+  10:{name:'RAID 10', sub:'Mirror + stripe (1+0)', min:4, even:true,
+      tol:n=>1,   tolMax:n=>n/2, usable:n=>n/2, eff:n=>50,
+      blurb:'Stripe across mirrored pairs. Always survives one failure (up to one per pair) — but two in the SAME pair kills it.'}
+};
+const RAID_ORDER=[0,1,5,6,10];
+function raidValidN(level){
+  const r=RAID[level]; if(r.fixed) return [r.fixed];
+  const out=[]; for(let n=r.min;n<=8;n++){ if(!r.even||n%2===0) out.push(n); } return out;
+}
+function raidClampN(level,n){ const v=raidValidN(level); if(v.includes(n)) return n; return v.reduce((a,b)=>Math.abs(b-n)<Math.abs(a-n)?b:a,v[0]); }
+let raid={ mode:'sandbox', level:5, n:4, failed:[], ch:null, answered:false, picked:null, streak:0, correct:0, total:0, best:0 };
+try{ raid.best=+localStorage.getItem('bench_raid_best')||0; }catch(e){}
+
+/* per-disk block layout — data blocks are labelled like A1/B1, parity P/Q.
+   Mirroring is shown by paired disks carrying identical labels (no extra colour). */
+function raidLayout(level,n){
+  const rows=['A','B','C'];
+  const disks=[]; for(let i=0;i<n;i++) disks.push({name:'Disk '+i, segs:[]});
+  if(level===0){
+    for(let i=0;i<n;i++) rows.forEach(r=> disks[i].segs.push({label:r+(i+1),role:'data'}));
+  } else if(level===1){
+    for(let i=0;i<n;i++) rows.forEach(r=> disks[i].segs.push({label:r+'1',role:'data'}));
+  } else if(level===5){
+    rows.forEach((r,ri)=>{ const par=ri%n; let dc=0; for(let i=0;i<n;i++){ if(i===par) disks[i].segs.push({label:'P',role:'parity'}); else { dc++; disks[i].segs.push({label:r+dc,role:'data'}); } } });
+  } else if(level===6){
+    rows.forEach((r,ri)=>{ const p1=ri%n,p2=(ri+1)%n; let dc=0; for(let i=0;i<n;i++){ if(i===p1) disks[i].segs.push({label:'P',role:'parity'}); else if(i===p2) disks[i].segs.push({label:'Q',role:'parity'}); else { dc++; disks[i].segs.push({label:r+dc,role:'data'}); } } });
+  } else if(level===10){
+    for(let i=0;i<n;i++){ const pair=Math.floor(i/2); rows.forEach(r=> disks[i].segs.push({label:r+(pair+1),role:'data'})); }
+  }
+  return disks;
+}
+function raidDrivesHTML(level,n,failed,interactive){
+  const disks=raidLayout(level,n);
+  const cyl=(i)=>{
+    const dead=failed.includes(i);
+    const segs=disks[i].segs.map(s=>`<div class="seg ${s.role}">${s.label}</div>`).join('');
+    return `<div class="disk ${dead?'failed':''}" ${interactive?`onclick="raidToggle(${i})"`:''}>
+      <div class="cyl"><div class="cap"></div><div class="segs">${segs}</div></div>
+      <div class="disk-name">Disk ${i}</div></div>`;
+  };
+  if(level===10){ let html=''; const L='ABCDEFGH';
+    for(let p=0;p<n;p+=2){ html+=`<div class="pair" data-label="Mirror ${L[p/2]}">${cyl(p)}${cyl(p+1)}</div>`; }
+    return html; }
+  let html=''; for(let i=0;i<n;i++) html+=cyl(i); return html;
+}
+function raidState(){
+  const {level,n,failed}=raid, f=failed.length;
+  if(level===0) return f>=1?{s:'dead',msg:'RAID 0 has no redundancy — a single failed drive destroys the entire array.'}:{s:'ok',msg:'All good. Remember: any one failure here means total data loss.'};
+  if(level===1) return f>=2?{s:'dead',msg:'Both mirror drives failed — the data is gone.'}:f===1?{s:'degraded',msg:'One mirror is down but its twin still holds the data. Replace the failed drive.'}:{s:'ok',msg:'Healthy mirror. It can survive one drive failing.'};
+  if(level===5) return f>=2?{s:'dead',msg:'Two drives failed. RAID 5 only tolerates one — the array is lost.'}:f===1?{s:'degraded',msg:'Running degraded on parity. Survives — but a second failure now would be fatal.'}:{s:'ok',msg:'Healthy. Survives exactly one drive failure.'};
+  if(level===6) return f>=3?{s:'dead',msg:'Three drives failed. RAID 6 tolerates only two — the array is lost.'}:f>=1?{s:'degraded',msg:'Degraded but alive. Double parity covers up to two failures.'}:{s:'ok',msg:'Healthy. Survives any two simultaneous failures.'};
+  if(level===10){
+    let pairDead=false;
+    for(let p=0;p<n;p+=2){ if(failed.includes(p)&&failed.includes(p+1)){ pairDead=true; break; } }
+    if(pairDead) return {s:'dead',msg:'Both drives in the same mirrored pair failed — that pair (and the whole stripe) is lost.'};
+    if(f>=1) return {s:'degraded',msg:'Degraded, but every failure so far is in a different mirror — data is still safe. (Two in one pair would kill it.)'};
+    return {s:'ok',msg:'Healthy. Survives at least one failure, and up to one per mirrored pair.'};
+  }
+}
+function viewRaidLab(){
+  el(`
+    <button class="back" onclick="go('home')">← Home</button>
+    <span class="eyebrow">RAID Lab · learn it by building it</span>
+    <h2 style="font-family:var(--display);font-size:28px;margin:8px 0 2px;letter-spacing:-.02em">RAID Lab 🧩</h2>
+    <div class="raid-toggle">
+      <button class="${raid.mode==='sandbox'?'on':''}" onclick="raidMode('sandbox')">Sandbox</button>
+      <button class="${raid.mode==='challenge'?'on':''}" onclick="raidMode('challenge')">Challenge</button>
+    </div>
+    <div id="raidBody">${raid.mode==='sandbox'?raidSandboxHTML():raidChallengeHTML()}</div>
+  `);
+}
+function raidMode(m){ raid.mode=m; if(m==='challenge'&&!raid.ch) raidNew(); raid.failed=[]; viewRaidLab(); }
+function raidSandboxHTML(){
+  const r=RAID[raid.level], n=raid.n, v=raidValidN(raid.level);
+  const lvlBtns=RAID_ORDER.map(L=>`<button class="${raid.level===L?'sel':''}" onclick="raidPick(${L})">${RAID[L].name}<small>${RAID[L].sub}</small></button>`).join('');
+  const minN=v[0], maxN=v[v.length-1];
+  const st=raidState();
+  const tol = raid.level===10 ? `1 guaranteed · up to ${r.tolMax(n)}` : String(r.tol(n));
+  return `
+    <p style="color:var(--muted);margin:0 0 12px">Pick a level and drive count, then <b>click any drive to "fail" it</b> and watch whether the array survives.</p>
+    <div class="raid-levels">${lvlBtns}</div>
+    <p class="raid-hint">${esc(r.blurb)}</p>
+    <div style="display:flex;align-items:center;gap:14px;margin:16px 0 0;flex-wrap:wrap">
+      <span class="raid-stat" style="padding:8px 12px"><span class="k">Drives</span></span>
+      <div class="raid-stepper">
+        <button onclick="raidCount(-1)" ${n<=minN||r.fixed?'disabled':''}>−</button>
+        <span>${n} drive${n>1?'s':''}</span>
+        <button onclick="raidCount(1)" ${n>=maxN||r.fixed?'disabled':''}>+</button>
+      </div>
+      ${r.fixed?'<span class="raid-hint">RAID 1 is a fixed 2-drive mirror.</span>':`<span class="raid-hint">valid: ${minN}${maxN>minN?'–'+maxN:''}${r.even?' (even only)':''}</span>`}
+    </div>
+    <div class="drive-bay">${raidDrivesHTML(raid.level,n,raid.failed,true)}</div>
+    <div class="raid-legend">
+      <span><i style="background:var(--seg-data)"></i>data block (A1, B1…)</span>
+      ${raid.level===5||raid.level===6?'<span><i style="background:var(--seg-parity)"></i>parity (P / Q — distributed)</span>':''}
+      <span><i style="background:var(--wrong)"></i>failed — click a disk to toggle</span>
+    </div>
+    ${raid.level===1||raid.level===10?'<p class="raid-hint">Mirrored disks hold <b>identical</b> blocks (same labels) — that is the copy, so no separate colour is needed.</p>':''}
+    <div class="raid-state ${st.s}">${st.s==='ok'?'✅ ':st.s==='degraded'?'⚠️ ':'❌ '}${esc(st.msg)}</div>
+    <div class="raid-status">
+      <div class="raid-stat"><div class="k">Min drives</div><div class="v">${r.min}${r.even?' (even)':''}</div></div>
+      <div class="raid-stat"><div class="k">Fault tolerance</div><div class="v" style="font-size:16px">${tol}</div></div>
+      <div class="raid-stat"><div class="k">Usable capacity</div><div class="v">${r.usable(n)} of ${n}</div></div>
+      <div class="raid-stat"><div class="k">Efficiency</div><div class="v">${r.eff(n)}%</div></div>
+    </div>
+    ${raid.failed.length?`<div style="margin-top:8px"><button class="btn" onclick="raidReset()">Reset drives</button></div>`:''}
+  `;
+}
+function raidPick(L){ raid.level=L; raid.n=raidClampN(L,raid.n); raid.failed=[]; viewRaidLab(); }
+function raidCount(d){ raid.n=raidClampN(raid.level,raid.n+d*(RAID[raid.level].even?2:1)); raid.failed=[]; viewRaidLab(); }
+function raidToggle(i){ const k=raid.failed.indexOf(i); if(k>=0) raid.failed.splice(k,1); else raid.failed.push(i); viewRaidLab(); }
+function raidReset(){ raid.failed=[]; viewRaidLab(); }
+
+/* ---- Challenge mode ---- */
+function raidPickN(level){ const v=raidValidN(level); return v[(Math.random()*v.length)|0]; }
+function raidSample(arr,k){ return shuffle(arr).slice(0,k); }
+function raidNumOpts(correct,extra){
+  const distract=[...new Set(extra)].filter(e=>e>=0 && e!==correct);
+  let g=0; while(distract.length<3 && g<60){ const c=Math.max(0,correct+((Math.random()*5|0)-2)); if(c!==correct && !distract.includes(c)) distract.push(c); g++; }
+  const opts=[correct].concat(shuffle(distract).slice(0,3));
+  return shuffle(opts).sort((a,b)=>a-b);
+}
+function raidNew(){
+  const gens=[genMin,genTol,genUsable,genBest,genBest,genTol];
+  raid.ch=gens[(Math.random()*gens.length)|0](); raid.answered=false; raid.picked=null;
+}
+function genMin(){
+  const L=RAID_ORDER[(Math.random()*RAID_ORDER.length)|0], r=RAID[L];
+  const opts=raidNumOpts(r.min,[2,3,4,5,6]);
+  return {q:`What is the minimum number of drives needed to build <b>${r.name}</b> (${r.sub})?`,
+    type:'num', opts, answer:r.min,
+    why:`${r.name} needs at least <b>${r.min}</b> drive${r.min>1?'s':''}${r.even?', and the total must be even':''}. ${r.blurb}`,
+    vis:{level:L,n:Math.max(r.min,r.even?r.min:r.min)} };
+}
+function genTol(){
+  let L=[0,1,5,6,10][(Math.random()*5)|0], r=RAID[L], n=raidPickN(L);
+  const ans=r.tol(n);
+  const opts=raidNumOpts(ans,[0,1,2,3]);
+  const q=L===10
+    ? `A <b>RAID 10</b> array has <b>${n} drives</b>. How many failures is it <b>guaranteed</b> to survive (worst case)?`
+    : `A <b>${r.name}</b> array has <b>${n} drives</b>. How many simultaneous drive failures can it tolerate?`;
+  const why=L===10
+    ? `RAID 10 always survives at least <b>1</b> failure, and can survive up to ${r.tolMax(n)} (one per mirror) — but two in the same pair is fatal, so the guaranteed answer is <b>1</b>.`
+    : `${r.name} tolerates <b>${ans}</b> failure${ans===1?'':'s'} regardless of array size. ${r.blurb}`;
+  return {q, type:'num', opts, answer:ans, why, vis:{level:L,n}};
+}
+function genUsable(){
+  let L=[0,1,5,6,10][(Math.random()*5)|0], r=RAID[L], n=raidPickN(L);
+  const ans=r.usable(n);
+  const opts=raidNumOpts(ans,[n,n-1,n-2,Math.floor(n/2)]);
+  return {q:`How many drives' worth of <b>usable capacity</b> does <b>${r.name}</b> give with <b>${n} drives</b>?`,
+    type:'num', opts, answer:ans,
+    why:`${r.name} usable capacity = <b>${ans} of ${n}</b> drives (${r.eff(n)}%). ${L===5?'One drive goes to parity.':L===6?'Two drives go to double parity.':L===1||L===10?'Mirroring halves usable space.':'No space is lost to redundancy.'}`,
+    vis:{level:L,n}};
+}
+function genBest(){
+  const templates=[
+    ()=>{ const n=[3,4,5,6][(Math.random()*4)|0]; const r=RAID[5];
+      return {ans:5, q:`You have <b>${n} drives</b>. You must survive <b>one</b> drive failure while keeping the <b>most usable capacity</b>. Which level is best?`,
+        why:`RAID 5 tolerates one failure and gives ${r.usable(n)} of ${n} drives — more than mirroring's 50% (RAID 1/10). RAID 0 has no redundancy; RAID 6 wastes a second parity drive you don't need.`, vis:{level:5,n}}; },
+    ()=>{ const n=[4,6,8][(Math.random()*3)|0];
+      return {ans:6, q:`You have <b>${n} drives</b> and need to survive <b>two</b> simultaneous failures with the <b>most capacity</b>. Which level is best?`,
+        why:`Two failures requires double parity → RAID 6 (${RAID[6].usable(n)} of ${n} usable). RAID 5 tolerates only one; RAID 10 only guarantees one.`, vis:{level:6,n}}; },
+    ()=>{ const n=[4,6,8][(Math.random()*3)|0];
+      return {ans:10, q:`A database server has <b>${n} drives</b> and needs the <b>best read AND write performance</b> while still tolerating a drive failure. Which level fits best?`,
+        why:`RAID 10 mirrors then stripes — fast reads and writes with redundancy, no parity write-penalty. RAID 5/6 pay a parity penalty on writes.`, vis:{level:10,n}}; },
+    ()=>{ const n=[2,3,4,6][(Math.random()*4)|0];
+      return {ans:0, q:`You have <b>${n} drives</b> of scratch/temp data (no backup needed) and want <b>maximum speed and capacity</b>. Which level?`,
+        why:`No redundancy needed → RAID 0 stripes for top speed and uses 100% of capacity. Any redundant level would waste space here.`, vis:{level:0,n}}; },
+    ()=>{ return {ans:1, q:`You have exactly <b>2 drives</b> and want redundancy for the OS volume. Which level is the right choice?`,
+        why:`With only two drives, a mirror (RAID 1) gives redundancy. RAID 5 needs 3 drives; RAID 6 and RAID 10 need 4.`, vis:{level:1,n:2}}; },
+  ];
+  const t=templates[(Math.random()*templates.length)|0]();
+  return {q:t.q, type:'level', opts:RAID_ORDER.slice(), answer:t.ans, why:t.why, vis:t.vis};
+}
+function raidChallengeHTML(){
+  const c=raid.ch;
+  const optHTML=c.opts.map(o=>{
+    const label=c.type==='level'?RAID[o].name:String(o);
+    let cls='';
+    if(raid.answered){ if(o===c.answer) cls='right'; else if(o===raid.picked) cls='wrongpick'; }
+    return `<button class="${cls}" ${raid.answered?'disabled':''} onclick="raidAnswer(${o})">${label}</button>`;
+  }).join('');
+  let fb='';
+  if(raid.answered){
+    const ok=raid.picked===c.answer;
+    const aLabel=c.type==='level'?RAID[c.answer].name:c.answer;
+    fb=`<div class="raid-fb" style="--dc:var(${ok?'--led':'--wrong'})">
+        <div class="ft" style="color:var(${ok?'--led':'--wrong'})">${ok?'Correct ✓':'Not quite ✗'}</div>
+        <div style="margin-bottom:10px"><b>Answer: ${esc(String(aLabel))}</b><br>${c.why}</div>
+        <div class="drive-bay" style="margin:6px 0 0">${raidDrivesHTML(c.vis.level,c.vis.n,[],false)}</div>
+      </div>
+      <div class="qfoot" style="margin-top:18px"><button class="btn primary" onclick="raidNext()">Next question →</button></div>`;
+  }
+  return `
+    <div class="raid-score" style="margin-bottom:10px">Streak <b>${raid.streak}</b> · Best ${raid.best} · ${raid.correct}/${raid.total} correct</div>
+    <div class="raid-scenario">
+      <div class="sc-q">${c.q}</div>
+      <div class="raid-opts">${optHTML}</div>
+      ${fb}
+    </div>`;
+}
+function raidAnswer(o){
+  if(raid.answered) return; raid.answered=true; raid.picked=o; raid.total++;
+  if(o===raid.ch.answer){ raid.correct++; raid.streak++; if(raid.streak>raid.best){ raid.best=raid.streak; try{ localStorage.setItem('bench_raid_best',raid.best); }catch(e){} } }
+  else raid.streak=0;
+  viewRaidLab();
+}
+function raidNext(){ raidNew(); viewRaidLab(); }
 
 /* ============ BOOT ============ */
 document.getElementById('verBadge').textContent='v'+VERSION;
